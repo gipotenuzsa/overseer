@@ -8,13 +8,10 @@ The original supplied Markdown file remains in the root for traceability.
 
 ## Current position
 
-**Active stage: 1 — foundation, implemented and verified locally.** Dependency
-installation, CLI tests, lint, type checks, builds, and the browser preview pass.
-The remote CI acceptance gate is still pending. The repository began with only the specification.
-
-The first implementation is deliberately limited to the foundation, as required by
-the specification's one-stage-at-a-time workflow. Scanning is not implemented yet.
-All subsequent stages remain planned until their prerequisites and acceptance gates pass.
+**Active stage: 3 — scanner and analyzers.** Stages 1 and 2 are complete.
+The foundation passed all four GitHub Actions jobs on Windows/Linux and Node 22/24:
+[CI run 39963440989](https://github.com/gipotenuzsa/overseer/actions/runs/39963440989).
+Both documented fixtures are present. Scanning is the next implementation step.
 
 ## Product goal and boundaries
 
@@ -61,16 +58,16 @@ Important details to resolve at the relevant stage:
 
 ## Roadmap and acceptance gates
 
-| Stage                    | Deliverable                                                                                              | Acceptance gate                                                                        | Status                                 |
-| ------------------------ | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------- |
-| 1. Foundation            | pnpm workspace; strict TypeScript; core, CLI, web; Vitest; ESLint; CI                                    | `pnpm test` and `pnpm build` pass in GitHub Actions; local quality checks pass         | Local checks passed; remote CI pending |
-| 2. Fixtures              | Small clean and problematic Next.js + Supabase projects; explicit expected findings                      | Both fixtures are documented; every check has a reproducible trigger or diff baseline  | Planned                                |
-| 3. Scanner and analyzers | Ignore-aware discovery, routes, API methods, SQL tables, env usage, imports, dependencies; `scan --json` | Correct model for both fixtures, asserted by tests                                     | Planned                                |
-| 4. Features and checks   | Import-based feature grouping; 12 check modules; health score; readable CLI output                       | Bad fixture matches expectations; good fixture has no critical/warning findings        | Planned                                |
-| 5. Snapshots and diff    | Snapshots; terminal and HTML reports; `diff --since`; `check`                                            | Fixture edits produce correct additions/removals, risk, health changes, and exit codes | Planned                                |
-| 6. Web UI                | Default command opens local overview; feature detail; findings; history                                  | Useful and correct on a real Next.js + Supabase project, beyond fixtures               | Planned                                |
-| 7. Rules and sync        | Natural-language rules; supported built-in constraints; managed blocks                                   | Repeated sync is idempotent; all text outside markers remains unchanged                | Planned                                |
-| 8. AI and release        | `off`, `agent`, `api`; schema validation; demo; README media; npm/GitHub release                         | Published package starts with one command on a clean machine                           | Planned                                |
+| Stage                    | Deliverable                                                                                              | Acceptance gate                                                                        | Status                     |
+| ------------------------ | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------- |
+| 1. Foundation            | pnpm workspace; strict TypeScript; core, CLI, web; Vitest; ESLint; CI                                    | `pnpm test` and `pnpm build` pass in GitHub Actions; local quality checks pass         | Complete; remote CI passed |
+| 2. Fixtures              | Small clean and problematic Next.js + Supabase projects; explicit expected findings                      | Both fixtures are documented; every check has a reproducible trigger or diff baseline  | Complete                   |
+| 3. Scanner and analyzers | Ignore-aware discovery, routes, API methods, SQL tables, env usage, imports, dependencies; `scan --json` | Correct model for both fixtures, asserted by tests                                     | Planned                    |
+| 4. Features and checks   | Import-based feature grouping; 12 check modules; health score; readable CLI output                       | Bad fixture matches expectations; good fixture has no critical/warning findings        | Planned                    |
+| 5. Snapshots and diff    | Snapshots; terminal and HTML reports; `diff --since`; `check`                                            | Fixture edits produce correct additions/removals, risk, health changes, and exit codes | Planned                    |
+| 6. Web UI                | Default command opens local overview; feature detail; findings; history                                  | Useful and correct on a real Next.js + Supabase project, beyond fixtures               | Planned                    |
+| 7. Rules and sync        | Natural-language rules; supported built-in constraints; managed blocks                                   | Repeated sync is idempotent; all text outside markers remains unchanged                | Planned                    |
+| 8. AI and release        | `off`, `agent`, `api`; schema validation; demo; README media; npm/GitHub release                         | Published package starts with one command on a clean machine                           | Planned                    |
 
 ### Stage 1 — foundation
 
@@ -87,7 +84,7 @@ Important details to resolve at the relevant stage:
 - [x] Pass formatting, lint, type checks, tests, build, and a built CLI smoke test.
 - [x] Verify the preview in a browser.
 - [x] Create the local foundation checkpoint commit (`chore: initialize Overseer foundation`).
-- [ ] Run the workflow on GitHub and record its URL and result.
+- [x] Run the workflow on GitHub and record its URL and result (run 39963440989).
 
 ### Stage 2 — fixtures
 
@@ -224,9 +221,9 @@ The CLI tests run on source code; the separate built CLI smoke checks verify emi
 ESM imports and package-version loading. Core analyzer tests and browser interaction
 tests will be added when those behaviors exist, rather than testing placeholder logic.
 
-Remote GitHub Actions has not run: this is a new local repository without a remote.
-The specification's remote CI acceptance gate therefore remains open.
-Linux and Node 24 are configured in CI but have not been executed locally.
+The initial local-only verification was followed by successful remote GitHub Actions
+run 39963440989. All four Windows/Linux and Node 22/24 jobs passed, including the
+locked dependency install, quality checks, tests, builds, and built CLI smoke check.
 
 ## Work log
 
@@ -242,8 +239,6 @@ Linux and Node 24 are configured in CI but have not been executed locally.
 - Saved the foundation as a local Git checkpoint; there was no push or publication.
 - Remaining stage 1 gate: a successful GitHub Actions run after a remote is connected.
 
-## Exact next task
-
 ### 2026-10-23 — foundation review and GitHub setup
 
 - Reviewed the specification, package boundaries, CLI, build scripts, and CI workflow.
@@ -252,11 +247,21 @@ Linux and Node 24 are configured in CI but have not been executed locally.
 - Fixed the core lint boundary: allowing network clients in `src/ai/` no longer allows
   UI imports there. Checked rejected UI imports and allowed/forbidden network imports.
 - The user authorized a public `gipotenuzsa/overseer` repository and the initial CI run.
-- No new dependencies were added. Remote CI has not passed yet.
+- No new dependencies were added. Remote CI subsequently passed in all four jobs.
 
-## Immediate next action
+### 2026-10-23 — stage 2 fixtures
 
-The remaining stage 1 gate is a successful run of the configured GitHub workflow after
-a remote is connected. Once the gate is satisfied,
-implement stage 2 only: the two fixtures and their expected findings, including a
-baseline for `new-dependency`. Do not start scanner/check implementation before that.
+- Added clean and problematic source projects with routes, aliases, client modules,
+  API handlers, environment examples, and Supabase migrations.
+- Documented a location and reproducible trigger for all 12 check IDs. The environment
+  case uses a synthetic template copied into temporary Git repositories; the dependency
+  case uses a separate baseline manifest.
+- Both fixtures are excluded from workspace installation and product lint/format rules.
+- Verified fixture contents and passed the existing 5 tests and all package builds.
+- Stage 2 acceptance is complete. Analyzer correctness remains to be tested in stage 3.
+- Found a real Next.js + Supabase target at `C:/Products/learnIt` for the later UI gate.
+
+## Exact next task
+
+Implement stage 3: bounded local discovery, AST/SQL analyzers, import resolution, and
+`scan --json`. Assert both fixture models and edge cases before starting checks.
