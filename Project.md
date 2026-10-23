@@ -8,7 +8,7 @@ The original supplied Markdown file remains in the root for traceability.
 
 ## Current position
 
-**Active stage: 7 — rules and sync.** Stages 1 through 6 are complete.
+**Active stage: 8 — optional AI and release.** Stages 1 through 7 are complete.
 The foundation passed all four GitHub Actions jobs on Windows/Linux and Node 22/24:
 [CI run 39963440989](https://github.com/gipotenuzsa/overseer/actions/runs/39963440989).
 Both documented fixtures produce tested models through the built `scan --json` command.
@@ -263,8 +263,8 @@ locked dependency install, quality checks, tests, builds, and built CLI smoke ch
 
 ## Exact next task
 
-Implement stage 7: documented built-in rules and safe, idempotent managed blocks in
-AGENTS.md and CLAUDE.md. Preserve all text and line endings outside those blocks.
+Implement stage 8: validated agent/API explanations, packaging, clean-install smoke
+tests, demo media, release documentation, and publication. npm login is not configured.
 
 ### 2026-10-23 — stage 3 scanner and analyzers
 
@@ -331,3 +331,18 @@ AGENTS.md and CLAUDE.md. Preserve all text and line endings outside those blocks
   passed for overview/detail, filters/empty state, copying, map, history, search, and
   rescan; no console errors. Inspected the 390 px layout and fixed menu overflow.
 - Stage 6 acceptance is complete. Snapshots remain local in the target .overseer folder.
+
+### 2026-10-23 — stage 7 rules and sync
+
+- Added documented built-in rules for server-only keys, RLS, and maximum file length.
+  Supported rules re-enable their checks and the strictest line rule wins. Other rules
+  are forwarded without claiming automatic enforcement.
+- Added `sync` and `sync --dry-run`, missing-file creation, managed block validation,
+  byte-preserving outside text, UTF-8 BOM/CRLF support, and rollback on write failure.
+- Added the agent instruction to run `npx overseer-cli diff` and show the result.
+- Passed formatting, lint, type checks, 46 tests, and builds. Repeated sync is unchanged;
+  malformed markers and UTF-16 files are rejected before either agent file is changed.
+- No new dependencies. Stage 7 acceptance is complete. Stage 6 also passed remote
+  CI run 39998504923 in all four environments.
+- Release preflight: `overseer-cli` still returns npm 404; no name is reserved. This
+  machine is not logged in to npm, so publication will need the user's npm login.

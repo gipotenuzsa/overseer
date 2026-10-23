@@ -16,7 +16,9 @@ export async function readText(file: string, limit = 2_000_000): Promise<string>
     const buffer = Buffer.alloc(Math.min(stat.size + 1, limit + 1));
     const { bytesRead } = await handle.read(buffer, 0, buffer.length, 0);
     if (bytesRead > limit) throw new Error('File exceeds the read limit.');
-    const text = buffer.subarray(0, bytesRead).toString('utf8');
+    const text = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(
+      buffer.subarray(0, bytesRead),
+    );
     if (text.includes('\0')) throw new Error('Binary files are not analyzed.');
     return text;
   } finally {

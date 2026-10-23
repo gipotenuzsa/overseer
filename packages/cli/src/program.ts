@@ -1,6 +1,7 @@
 import { Command, InvalidArgumentError } from 'commander';
 import open from 'open';
 import { startServer } from './server.js';
+import { syncRules } from '@overseer/core';
 import {
   analyzeProject,
   saveSnapshot,
@@ -110,5 +111,21 @@ export function createProgram(version: string): Command {
         );
     });
 
+  program
+    .command('sync')
+    .description('Share project rules with your coding agent')
+    .argument('[directory]', 'Project folder', '.')
+    .option('--dry-run', 'Show planned changes without writing files')
+    .action(async (directory: string, options: { dryRun?: boolean }) => {
+      const result = await syncRules(directory, options.dryRun);
+      const lines = result.files.map(
+        (file) =>
+          `${file.file}: ${file.changed ? (options.dryRun ? 'would update' : 'updated') : 'unchanged'}`,
+      );
+      lines.push(
+        `${result.supported.length} supported rules; ${result.forwarded.length} rules forwarded to your agent without automatic checks.`,
+      );
+      program.configureOutput().writeOut?.(lines.join('\n') + '\n');
+    });
   return program;
 }

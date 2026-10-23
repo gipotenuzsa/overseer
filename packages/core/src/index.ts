@@ -9,3 +9,5 @@ export { compareModels } from './snapshot/compare.js';
 export type { DiffReport, Changes } from './snapshot/compare.js';
 export { modelAtRef } from './snapshot/git-ref.js';
 export { managedDirectory, atomicWrite } from './storage.js';
+export { syncRules } from './rules/sync.js';
+export { parseRules } from './rules/parse.js';

@@ -12,6 +12,7 @@ import { importResolver, routeFor } from '../analyzers/imports.js';
 import { discover, optionalText } from './files.js';
 import type { Discovery } from './files.js';
 import { gitInfo } from './git.js';
+import { parseRules } from '../rules/parse.js';
 
 export interface ScanContext {
   root: string;
@@ -36,6 +37,11 @@ export async function loadConfig(root: string): Promise<Config> {
 export async function scanContext(directory: string): Promise<ScanContext> {
   const root = path.resolve(directory);
   const config = await loadConfig(root);
+  const rules = parseRules(
+    (await optionalText(path.join(root, '.overseer/rules.md'), 100_000)) ?? '',
+  );
+  config.disabledChecks = config.disabledChecks.filter((id) => !rules.enforcedChecks.includes(id));
+  if (rules.maxLines !== undefined) config.hugeFileLines = rules.maxLines;
   const discovered = await discover(root, config.ignore);
   const { sources, envFiles, diagnostics } = discovered;
   const manifestSchema = z.object({
