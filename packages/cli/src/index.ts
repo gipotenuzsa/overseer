@@ -15,4 +15,11 @@ if (
   throw new Error('The Overseer package is missing a valid version. Reinstall the package.');
 }
 
-createProgram(manifest.version).parse();
+try {
+  await createProgram(manifest.version).parseAsync();
+} catch (error: unknown) {
+  console.error(
+    error instanceof Error ? error.message : 'Overseer could not complete this command.',
+  );
+  process.exitCode = 1;
+}

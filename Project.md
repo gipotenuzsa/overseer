@@ -8,10 +8,10 @@ The original supplied Markdown file remains in the root for traceability.
 
 ## Current position
 
-**Active stage: 3 — scanner and analyzers.** Stages 1 and 2 are complete.
+**Active stage: 4 — features and checks.** Stages 1 through 3 are complete.
 The foundation passed all four GitHub Actions jobs on Windows/Linux and Node 22/24:
 [CI run 39963440989](https://github.com/gipotenuzsa/overseer/actions/runs/39963440989).
-Both documented fixtures are present. Scanning is the next implementation step.
+Both documented fixtures produce tested models through the built `scan --json` command.
 
 ## Product goal and boundaries
 
@@ -263,5 +263,22 @@ locked dependency install, quality checks, tests, builds, and built CLI smoke ch
 
 ## Exact next task
 
-Implement stage 3: bounded local discovery, AST/SQL analyzers, import resolution, and
-`scan --json`. Assert both fixture models and edge cases before starting checks.
+Implement stage 4: feature grouping, all 12 checks with fixture tests, configuration,
+health scoring, and readable terminal output. The dependency check remains diff-only.
+
+### 2026-10-23 — stage 3 scanner and analyzers
+
+- Added bounded discovery, nested ignore rules, safe symlink skipping, AST facts, ordered
+  SQL migrations, route normalization, local aliases, transitive client imports, and Git metadata.
+- Environment contents are not read. Models contain hashes, names, and relationships;
+  parse diagnostics never include source text. Unknown RLS is represented as `null`.
+- Added `scan [directory] --json` and actionable errors for unsupported projects.
+- Added pinned runtime dependencies: `@babel/parser` parses TS/TSX without execution;
+  `ignore` handles Git ignore semantics; `jsonc-parser` reads commented tsconfig files;
+  `zod` validates configuration and manifests. Native file/Git APIs avoid extra wrappers.
+- Fixed Windows short-path handling using real paths. Built core declarations before
+  consumer type checks, and aliased core source in Vitest for fresh-checkout tests.
+- Passed formatting, lint, type checks, 15 tests, all builds, and built CLI JSON checks
+  for both fixtures. Stage 3 acceptance is complete.
+- Limits: static local imports only; inherited tsconfig aliases, computed API URLs,
+  dynamic SQL, and external database state are not inferred. Skipped files are reported.

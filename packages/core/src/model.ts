@@ -18,11 +18,14 @@ export interface Feature {
 }
 
 export interface Finding {
+  id: string;
   checkId: string;
   level: FindingLevel;
   file: string;
   line?: number;
   message: string;
+  title: string;
+  whyDangerous: string;
   fixPrompt: string;
   featureId?: string;
 }
@@ -35,10 +38,11 @@ export interface ProjectModel {
   imports: [from: string, to: string][];
   pages: { route: string; file: string }[];
   apis: { route: string; file: string; methods: string[] }[];
-  tables: { name: string; rls: boolean; usedIn: string[] }[];
+  tables: { name: string; rls: boolean | null; usedIn: string[] }[];
   envVars: { name: string; public: boolean; usedIn: string[] }[];
   dependencies: Record<string, string>;
   features: Feature[];
   findings: Finding[];
   health: number;
+  diagnostics: { file: string; message: string }[];
 }

@@ -39,7 +39,7 @@ describe('CLI entry behavior', () => {
     expect(result.exitCode).toBe(0);
     expect(result.stderr).toBe('');
     expect(result.stdout).toContain('Usage: overseer');
-    expect(result.stdout).toContain('project scanning is not implemented yet');
+    expect(result.stdout).toContain('scan extracts local project facts');
   });
 
   it('supports explicit help with a successful exit', () => {
@@ -58,7 +58,7 @@ describe('CLI entry behavior', () => {
   });
 
   it('rejects unsupported commands instead of silently succeeding', () => {
-    const result = runCli(['scan']);
+    const result = runCli(['missing-command']);
     expect(result.exitCode).toBe(1);
     expect(result.stderr).toContain('error:');
     expect(result.stdout).toBe('');
