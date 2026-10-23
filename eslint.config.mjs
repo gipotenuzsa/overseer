@@ -2,6 +2,11 @@ import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import { defineConfig, globalIgnores } from 'eslint/config';
 
+const uiImports = {
+  group: ['react', 'react/*', 'react-dom', 'react-dom/*', '@overseer/web', '@overseer/web/*'],
+  message: 'Keep the core independent of the user interface.',
+};
+
 export default defineConfig(
   globalIgnores(['**/dist/**', '**/node_modules/**', '**/coverage/**', 'fixtures/**']),
   js.configs.recommended,
@@ -14,6 +19,12 @@ export default defineConfig(
     },
   },
   {
+    files: ['packages/core/src/ai/**/*.ts'],
+    rules: {
+      'no-restricted-imports': ['error', { patterns: [uiImports] }],
+    },
+  },
+  {
     files: ['packages/core/src/**/*.ts'],
     ignores: ['packages/core/src/ai/**'],
     rules: {
@@ -21,10 +32,7 @@ export default defineConfig(
         'error',
         {
           patterns: [
-            {
-              group: ['react', 'react/*', 'react-dom', 'react-dom/*', '@overseer/web'],
-              message: 'Keep the core independent of the user interface.',
-            },
+            uiImports,
             {
               group: [
                 'node:http',

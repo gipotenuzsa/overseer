@@ -244,6 +244,18 @@ Linux and Node 24 are configured in CI but have not been executed locally.
 
 ## Exact next task
 
+### 2026-10-23 — foundation review and GitHub setup
+
+- Reviewed the specification, package boundaries, CLI, build scripts, and CI workflow.
+- Re-ran all local quality checks and the built CLI help/version commands successfully.
+- Confirmed the preserved specification still matches its original SHA-256 hash.
+- Fixed the core lint boundary: allowing network clients in `src/ai/` no longer allows
+  UI imports there. Checked rejected UI imports and allowed/forbidden network imports.
+- The user authorized a public `gipotenuzsa/overseer` repository and the initial CI run.
+- No new dependencies were added. Remote CI has not passed yet.
+
+## Immediate next action
+
 The remaining stage 1 gate is a successful run of the configured GitHub workflow after
 a remote is connected. Once the gate is satisfied,
 implement stage 2 only: the two fixtures and their expected findings, including a
