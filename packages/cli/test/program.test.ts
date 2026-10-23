@@ -34,12 +34,12 @@ function runCli(args: string[]) {
 }
 
 describe('CLI entry behavior', () => {
-  it('shows honest help by default instead of claiming to scan a project', () => {
-    const result = runCli([]);
+  it('documents the local dashboard and scan commands', () => {
+    const result = runCli(['--help']);
     expect(result.exitCode).toBe(0);
     expect(result.stderr).toBe('');
     expect(result.stdout).toContain('Usage: overseer');
-    expect(result.stdout).toContain('scan extracts local project facts');
+    expect(result.stdout).toContain('ui');
   });
 
   it('supports explicit help with a successful exit', () => {

@@ -8,7 +8,7 @@ The original supplied Markdown file remains in the root for traceability.
 
 ## Current position
 
-**Active stage: 6 — local web UI.** Stages 1 through 5 are complete.
+**Active stage: 7 — rules and sync.** Stages 1 through 6 are complete.
 The foundation passed all four GitHub Actions jobs on Windows/Linux and Node 22/24:
 [CI run 39963440989](https://github.com/gipotenuzsa/overseer/actions/runs/39963440989).
 Both documented fixtures produce tested models through the built `scan --json` command.
@@ -263,8 +263,8 @@ locked dependency install, quality checks, tests, builds, and built CLI smoke ch
 
 ## Exact next task
 
-Implement stage 6: loopback HTTP server, overview, feature detail/map, findings, and
-history. Verify the interface and model against `C:/Products/learnIt` before stage 7.
+Implement stage 7: documented built-in rules and safe, idempotent managed blocks in
+AGENTS.md and CLAUDE.md. Preserve all text and line endings outside those blocks.
 
 ### 2026-10-23 — stage 3 scanner and analyzers
 
@@ -312,3 +312,22 @@ history. Verify the interface and model against `C:/Products/learnIt` before sta
   repeated runs, edits, deletions, corruption, HTML escaping, Git refs, and CLI exit codes.
 - No new dependencies. Stage 5 acceptance is complete. Stage 4 also passed remote
   CI run 39965569148 in all four environments.
+
+### 2026-10-23 — stage 6 local web UI
+
+- Added a loopback-only HTTP server, browser launch, port-conflict fallback, host/origin
+  checks, a rescan token, static assets, and clean server shutdown.
+- Added overview, searchable features, feature detail dialogs, a React Flow data map,
+  severity filters, copyable fix prompts, history, health trends, and mobile layouts.
+- Pinned `open` for cross-platform browser launch and `@xyflow/react` for the interactive
+  feature/data graph. Plain CSS handles the design without an additional styling runtime.
+- Tested the real Next.js + Supabase project at `C:/Products/learnIt`: 116 analyzed
+  files, 11 pages, the protected `progress` table, 4 warnings, 4 info findings, health 76.
+  Verified routes and table use against its source. No project source was modified.
+- Real-project testing led to regression fixes for TS generic syntax, ignored asset
+  imports, module-level string table names, and shadowed constants. No parse/import
+  diagnostics remain on this target.
+- Passed formatting, lint, type checks, 42 tests, and production builds. Browser checks
+  passed for overview/detail, filters/empty state, copying, map, history, search, and
+  rescan; no console errors. Inspected the 390 px layout and fixed menu overflow.
+- Stage 6 acceptance is complete. Snapshots remain local in the target .overseer folder.

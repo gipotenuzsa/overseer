@@ -62,12 +62,44 @@ export interface SourceFacts {
   wrapped: boolean;
 }
 const methods = new Set(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']);
-export function analyzeSource(source: string): SourceFacts {
+export function analyzeSource(source: string, jsx = true): SourceFacts {
   const ast = parse(source, {
     sourceType: 'unambiguous',
-    plugins: ['typescript', 'jsx'],
+    plugins: jsx ? ['typescript', 'jsx'] : ['typescript'],
     attachComment: false,
   });
+  const constants = new Map<string, string>();
+  const bindings = new Map<string, number>();
+  for (const statement of ast.program.body) {
+    const node = record(statement)!;
+    const declaration = node.type === 'ExportNamedDeclaration' ? record(node.declaration) : node;
+    if (declaration?.type !== 'VariableDeclaration' || declaration.kind !== 'const') continue;
+    for (const item of array(declaration.declarations)) {
+      const variable = record(item);
+      const value = literal(variable?.init);
+      if (record(variable?.id)?.type === 'Identifier' && value !== undefined)
+        constants.set(name(variable?.id), value);
+    }
+  }
+  const bind = (pattern: unknown): void => {
+    walk(pattern, (node) => {
+      if (node.type === 'Identifier') {
+        const key = name(node);
+        bindings.set(key, (bindings.get(key) ?? 0) + 1);
+      }
+    });
+  };
+  walk(ast, (node) => {
+    if (node.type === 'VariableDeclarator') bind(node.id);
+    if (Array.isArray(node.params)) for (const parameter of node.params) bind(parameter);
+    if (node.type === 'CatchClause') bind(node.param);
+    if (node.type === 'AssignmentExpression') bind(node.left);
+    if (String(node.type).startsWith('Import') && node.local) bind(node.local);
+  });
+  for (const key of constants.keys()) if (bindings.get(key) !== 1) constants.delete(key);
+  const staticString = (value: unknown): string | undefined =>
+    literal(value) ??
+    (record(value)?.type === 'Identifier' ? constants.get(name(value)) : undefined);
   const facts: SourceFacts = {
     client: false,
     imports: [],
@@ -160,14 +192,18 @@ export function analyzeSource(source: string): SourceFacts {
       literal(args[1]) === '*'
     )
       facts.cors.push(line);
-    if (callee.endsWith('.from') && literal(args[0]))
-      facts.tables.push({ name: literal(args[0])!, access: 'read' });
+    if (
+      callee.endsWith('.from') &&
+      !/^(?:Array|Buffer|\w+Array)\.from$/.test(callee) &&
+      staticString(args[0])
+    )
+      facts.tables.push({ name: staticString(args[0])!, access: 'read' });
     const property = name(record(node.callee)?.property);
     if (['insert', 'update', 'upsert', 'delete'].includes(property)) {
       let inner = record(record(node.callee)?.object);
       for (let count = 0; inner && count < 20; count++) {
         if (name(inner.callee).endsWith('.from')) {
-          const table = literal(array(inner.arguments)[0]);
+          const table = staticString(array(inner.arguments)[0]);
           if (table) facts.tables.push({ name: table, access: 'write' });
           break;
         }

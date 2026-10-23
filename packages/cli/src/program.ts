@@ -1,4 +1,6 @@
-import { Command } from 'commander';
+import { Command, InvalidArgumentError } from 'commander';
+import open from 'open';
+import { startServer } from './server.js';
 import {
   analyzeProject,
   saveSnapshot,
@@ -20,9 +22,44 @@ export function createProgram(version: string): Command {
         'Follow implementation progress in Project.md.',
     );
 
-  program.action(() => {
-    program.outputHelp();
-  });
+  const parsePort = (value: string): number => {
+    const port = Number(value);
+    if (!Number.isInteger(port) || port < 0 || port > 65535)
+      throw new InvalidArgumentError('Use a port from 0 to 65535.');
+    return port;
+  };
+  async function showUI(
+    directory: string,
+    options: { open?: boolean; port?: number },
+  ): Promise<void> {
+    const running = await startServer(
+      directory,
+      options.port === undefined ? {} : { port: options.port },
+    );
+    program
+      .configureOutput()
+      .writeOut?.(`Overseer is ready at ${running.url}\nPress Ctrl+C to stop.\n`);
+    const stop = (): void => {
+      void running.close();
+    };
+    process.once('SIGINT', stop);
+    process.once('SIGTERM', stop);
+    if (options.open !== false)
+      await open(running.url).catch(() => {
+        program.configureOutput().writeErr?.('Open the local address above in your browser.\n');
+      });
+  }
+  program
+    .option('--no-open', 'Keep the browser closed')
+    .option('--port <port>', 'Preferred local port', parsePort)
+    .action(async (options: { open?: boolean; port?: number }) => showUI('.', options));
+  program
+    .command('ui')
+    .description('Open the local project dashboard')
+    .argument('[directory]', 'Project folder', '.')
+    .option('--no-open', 'Keep the browser closed')
+    .option('--port <port>', 'Preferred local port', parsePort)
+    .action(showUI);
 
   program
     .command('scan')

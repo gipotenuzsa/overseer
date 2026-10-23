@@ -97,6 +97,19 @@ describe('project models', () => {
 });
 
 describe('source and SQL edge cases', () => {
+  it('resolves module string constants without assuming shadowed names refer to them', () => {
+    expect(
+      analyzeSource("const TABLE = 'progress'; db.from(TABLE).upsert({id:1}); Array.from('text');")
+        .tables,
+    ).toContainEqual({ name: 'progress', access: 'write' });
+    expect(
+      analyzeSource(
+        "const TABLE = 'progress'; function query(TABLE: string) { return db.from(TABLE); }",
+      ).tables,
+    ).toEqual([]);
+    expect(analyzeSource("Array.from('text'); Buffer.from('text');").tables).toEqual([]);
+    expect(() => analyzeSource('const identity = <T>(value: T) => value;', false)).not.toThrow();
+  });
   it('uses syntax instead of comments or inert strings', () => {
     const facts = analyzeSource(
       `// eval('bad')\nconst text = "process.env.NEXT_PUBLIC_SECRET";\nexport { handler as POST };\nfunction handler() {}\nconst { NEXT_PUBLIC_URL } = process.env;\nimport('./part');`,

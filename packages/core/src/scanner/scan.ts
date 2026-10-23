@@ -84,7 +84,7 @@ export async function scanContext(directory: string): Promise<ScanContext> {
     let parsed: SourceFacts | undefined;
     if (/\.[cm]?[jt]sx?$/.test(file) && !file.endsWith('.d.ts')) {
       try {
-        parsed = analyzeSource(content);
+        parsed = analyzeSource(content, !/\.[cm]?ts$/.test(file));
         facts.set(file, parsed);
       } catch {
         diagnostics.push({
@@ -112,7 +112,12 @@ export async function scanContext(directory: string): Promise<ScanContext> {
     for (const specifier of parsed?.imports ?? []) {
       const target = resolve(file, specifier);
       if (target) model.imports.push([file, target]);
-      else if (specifier.startsWith('.') || specifier.startsWith('@/'))
+      else if (
+        (specifier.startsWith('.') || specifier.startsWith('@/')) &&
+        !/\.(?:css|scss|sass|less|svg|png|jpg|jpeg|webp|gif|ico|woff2?|ttf)(?:\?.*)?$/.test(
+          specifier,
+        )
+      )
         diagnostics.push({ file, message: `A local import could not be resolved: ${specifier}.` });
     }
     for (const env of parsed?.env ?? []) {
