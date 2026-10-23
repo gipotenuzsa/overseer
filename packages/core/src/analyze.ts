@@ -1,11 +1,19 @@
 import type { ProjectModel } from './model.js';
 import { scanContext } from './scanner/scan.js';
+import type { ScanContext } from './scanner/scan.js';
 import { groupFeatures } from './features/group.js';
 import { healthScore } from './health/score.js';
 import { checks } from './checks/index.js';
 
 export async function analyzeProject(root: string, baseline?: ProjectModel): Promise<ProjectModel> {
   const context = await scanContext(root);
+  return analyzeContext(context, baseline);
+}
+
+export async function analyzeContext(
+  context: ScanContext,
+  baseline?: ProjectModel,
+): Promise<ProjectModel> {
   const { model, config } = context;
   model.features = groupFeatures(context);
   for (const check of checks) {

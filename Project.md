@@ -8,7 +8,7 @@ The original supplied Markdown file remains in the root for traceability.
 
 ## Current position
 
-**Active stage: 5 — snapshots and diff.** Stages 1 through 4 are complete.
+**Active stage: 6 — local web UI.** Stages 1 through 5 are complete.
 The foundation passed all four GitHub Actions jobs on Windows/Linux and Node 22/24:
 [CI run 39963440989](https://github.com/gipotenuzsa/overseer/actions/runs/39963440989).
 Both documented fixtures produce tested models through the built `scan --json` command.
@@ -263,8 +263,8 @@ locked dependency install, quality checks, tests, builds, and built CLI smoke ch
 
 ## Exact next task
 
-Implement stage 5: validated snapshots, comparisons, terminal/HTML reports, Git-ref
-comparison without checkout changes, and `check` exit codes.
+Implement stage 6: loopback HTTP server, overview, feature detail/map, findings, and
+history. Verify the interface and model against `C:/Products/learnIt` before stage 7.
 
 ### 2026-10-23 — stage 3 scanner and analyzers
 
@@ -297,3 +297,18 @@ comparison without checkout changes, and `check` exit codes.
 - Conservative limits: wrapped/re-exported write handlers are not flagged as lacking
   auth; unresolved imports/parse errors suppress unused-file findings. These patterns
   do not prove authorization, exploitability, or whole-project security.
+
+### 2026-10-23 — stage 5 snapshots and diff
+
+- Added versioned, schema-validated snapshots with atomic writes and explicit errors
+  for corrupt data. Managed storage rejects directory links.
+- Added feature/file/API/table/environment/dependency comparisons, risk, health changes,
+  new/resolved findings, terminal reports, and escaped standalone HTML reports.
+- Added `diff --since` using bounded Git blob reads into a temporary directory. Tests
+  verify nested project roots and preserve the index and uncommitted working files.
+- Added `check`: exit 1 for critical findings, 0 otherwise; command errors use exit 2.
+- Diff-only dependency findings do not persist into the next static health baseline.
+- Passed formatting, lint, type checks, 40 tests, and all builds. Tests cover first and
+  repeated runs, edits, deletions, corruption, HTML escaping, Git refs, and CLI exit codes.
+- No new dependencies. Stage 5 acceptance is complete. Stage 4 also passed remote
+  CI run 39965569148 in all four environments.

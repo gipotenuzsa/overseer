@@ -21,5 +21,5 @@ try {
   console.error(
     error instanceof Error ? error.message : 'Overseer could not complete this command.',
   );
-  process.exitCode = 1;
+  process.exitCode = 2;
 }

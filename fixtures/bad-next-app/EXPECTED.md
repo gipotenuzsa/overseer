@@ -13,7 +13,7 @@ This project is a source fixture with synthetic tokens only. Do not deploy it.
 | dangerous-html | warning | components/Results.tsx | 10 | Raw HTML insertion |
 | cors-wildcard | warning | app/api/results/route.ts | 6 | Wildcard origin on a mutating endpoint |
 | huge-file | warning | lib/long.ts | 1 | 402 lines with the default limit of 400 |
-| duplicate-code | info | lib/second.ts | 3 | 18 identical consecutive statements also in lib/first.ts |
+| duplicate-code | info | lib/second.ts | 1 | A token block spans the repeated function body also in lib/first.ts |
 | unused-file | info | lib/unused.ts | 1 | No incoming imports and no implicit Next.js role |
 | new-dependency | info | package.json | 1 | nanoid added relative to baseline.package.json; diff only |
 
