@@ -1,5 +1,6 @@
 import { Command } from 'commander';
-import { scanProject } from '@overseer/core';
+import { analyzeProject } from '@overseer/core';
+import { formatScan } from './format.js';
 
 export function createProgram(version: string): Command {
   const program = new Command()
@@ -22,10 +23,8 @@ export function createProgram(version: string): Command {
     .argument('[directory]', 'Project folder', '.')
     .option('--json', 'Print the project model as JSON')
     .action(async (directory: string, options: { json?: boolean }) => {
-      const model = await scanProject(directory);
-      const output = options.json
-        ? JSON.stringify(model, null, 2)
-        : `${model.pages.length} pages, ${model.apis.length} APIs, ${model.tables.length} tables.\n`;
+      const model = await analyzeProject(directory);
+      const output = options.json ? JSON.stringify(model, null, 2) : formatScan(model);
       program.configureOutput().writeOut?.(output + '\n');
     });
 

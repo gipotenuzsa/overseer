@@ -8,7 +8,7 @@ The original supplied Markdown file remains in the root for traceability.
 
 ## Current position
 
-**Active stage: 4 — features and checks.** Stages 1 through 3 are complete.
+**Active stage: 5 — snapshots and diff.** Stages 1 through 4 are complete.
 The foundation passed all four GitHub Actions jobs on Windows/Linux and Node 22/24:
 [CI run 39963440989](https://github.com/gipotenuzsa/overseer/actions/runs/39963440989).
 Both documented fixtures produce tested models through the built `scan --json` command.
@@ -263,8 +263,8 @@ locked dependency install, quality checks, tests, builds, and built CLI smoke ch
 
 ## Exact next task
 
-Implement stage 4: feature grouping, all 12 checks with fixture tests, configuration,
-health scoring, and readable terminal output. The dependency check remains diff-only.
+Implement stage 5: validated snapshots, comparisons, terminal/HTML reports, Git-ref
+comparison without checkout changes, and `check` exit codes.
 
 ### 2026-10-23 — stage 3 scanner and analyzers
 
@@ -282,3 +282,18 @@ health scoring, and readable terminal output. The dependency check remains diff-
   for both fixtures. Stage 3 acceptance is complete.
 - Limits: static local imports only; inherited tsconfig aliases, computed API URLs,
   dynamic SQL, and external database state are not inferred. Skipped files are reported.
+
+### 2026-10-23 — stage 4 features and checks
+
+- Added import/API/table feature grouping including shared layouts and migration files.
+- Implemented all 12 checks in separate modules with bad/good fixture tests. The
+  dependency check accepts a baseline and does not run during ordinary scans.
+- Added stable finding IDs, explanations, fix prompts, health scoring, disabled checks,
+  suppressions, auth helper configuration, and intentionally public endpoint configuration.
+- Pinned `@jscpd/core` and `@jscpd/tokenizer` for in-memory duplicate detection without
+  a second filesystem scan. Pinned `picocolors` for readable terminal severity output.
+- Passed formatting, lint, type checks, 32 tests, and builds. The clean fixture has
+  zero findings and health 100; each bad-fixture check meets its documented trigger.
+- Conservative limits: wrapped/re-exported write handlers are not flagged as lacking
+  auth; unresolved imports/parse errors suppress unused-file findings. These patterns
+  do not prove authorization, exploitability, or whole-project security.
