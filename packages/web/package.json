@@ -1,6 +1,6 @@
 {
   "name": "@overseer/web",
-  "version": "0.1.0-dev.0",
+  "version": "0.1.0",
   "description": "The local Overseer interface.",
   "private": true,
   "type": "module",

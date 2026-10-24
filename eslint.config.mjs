@@ -8,7 +8,13 @@ const uiImports = {
 };
 
 export default defineConfig(
-  globalIgnores(['**/dist/**', '**/node_modules/**', '**/coverage/**', 'fixtures/**']),
+  globalIgnores([
+    '**/dist/**',
+    '**/node_modules/**',
+    '**/coverage/**',
+    'fixtures/**',
+    'artifacts/**',
+  ]),
   js.configs.recommended,
   tseslint.configs.recommended,
   {

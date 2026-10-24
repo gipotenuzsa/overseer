@@ -7,6 +7,8 @@ export function formatScan(model: ProjectModel): string {
     `${model.features.length} features · ${model.pages.length} pages · ${model.apis.length} APIs · ${model.tables.length} tables`,
     '',
   ];
+  if (model.summary)
+    lines.push(`AI paraphrase (${model.summary.source}): ${model.summary.text}`, '');
   for (const feature of model.features)
     lines.push(`${color.cyan(feature.name)} (${feature.entry}) — ${feature.files.length} files`);
   lines.push(

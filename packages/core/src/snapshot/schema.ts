@@ -12,6 +12,8 @@ export const findingSchema = z.object({
   message: z.string(),
   fixPrompt: z.string(),
   featureId: z.string().optional(),
+  explanation: z.string().optional(),
+  explanationSource: z.enum(['agent', 'api']).optional(),
 });
 export const modelSchema = z.object({
   createdAt: z.string().datetime(),
@@ -36,6 +38,7 @@ export const modelSchema = z.object({
       id: z.string(),
       name: z.string(),
       description: z.string().optional(),
+      explanationSource: z.enum(['agent', 'api']).optional(),
       entry: z.string(),
       files: strings,
       tables: z.array(z.object({ name: z.string(), access: z.enum(['read', 'write']) })),
@@ -45,6 +48,9 @@ export const modelSchema = z.object({
   findings: z.array(findingSchema),
   health: z.number().int().min(0).max(100),
   diagnostics: z.array(z.object({ file: z.string(), message: z.string() })),
+  summary: z
+    .object({ text: z.string(), files: strings, source: z.enum(['agent', 'api']) })
+    .optional(),
 });
 export const snapshotSchema = z.object({
   version: z.literal(1),

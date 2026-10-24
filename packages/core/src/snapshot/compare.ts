@@ -7,6 +7,7 @@ export interface Changes {
   changed: string[];
 }
 export interface DiffReport {
+  summary?: { text: string; files: string[]; source: 'agent' | 'api' };
   createdAt: string;
   baselineAt: string | null;
   firstRun: boolean;
@@ -33,6 +34,19 @@ function changes(before: Record<string, string>, after: Record<string, string>):
       .sort(),
   };
 }
+function featureFacts(model: ProjectModel | undefined): Record<string, string> {
+  return Object.fromEntries(
+    model?.features.map((feature) => [
+      feature.id,
+      JSON.stringify({
+        entry: feature.entry,
+        files: feature.files,
+        tables: feature.tables,
+        apis: feature.apis,
+      }),
+    ]) ?? [],
+  );
+}
 export function compareModels(before: ProjectModel | undefined, after: ProjectModel): DiffReport {
   const oldFindings = before?.findings.filter((item) => item.checkId !== 'new-dependency') ?? [];
   const oldIds = new Set(oldFindings.map((item) => item.id));
@@ -42,12 +56,7 @@ export function compareModels(before: ProjectModel | undefined, after: ProjectMo
     Object.fromEntries(before?.files.map((file) => [file.path, file.hash]) ?? []),
     Object.fromEntries(after.files.map((file) => [file.path, file.hash])),
   );
-  const features = changes(
-    Object.fromEntries(
-      before?.features.map((feature) => [feature.id, JSON.stringify(feature)]) ?? [],
-    ),
-    Object.fromEntries(after.features.map((feature) => [feature.id, JSON.stringify(feature)])),
-  );
+  const features = changes(featureFacts(before), featureFacts(after));
   for (const feature of after.features)
     if (
       !features.added.includes(feature.id) &&
@@ -56,6 +65,7 @@ export function compareModels(before: ProjectModel | undefined, after: ProjectMo
     )
       features.changed.push(feature.id);
   return {
+    ...(after.summary ? { summary: after.summary } : {}),
     createdAt: after.createdAt,
     baselineAt: before?.createdAt ?? null,
     firstRun: !before,

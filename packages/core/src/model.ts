@@ -11,6 +11,7 @@ export interface Feature {
   id: string;
   name: string;
   description?: string;
+  explanationSource?: 'agent' | 'api';
   entry: string;
   files: string[];
   tables: { name: string; access: 'read' | 'write' }[];
@@ -28,6 +29,8 @@ export interface Finding {
   whyDangerous: string;
   fixPrompt: string;
   featureId?: string;
+  explanation?: string;
+  explanationSource?: 'agent' | 'api';
 }
 
 export interface ProjectModel {
@@ -45,4 +48,5 @@ export interface ProjectModel {
   findings: Finding[];
   health: number;
   diagnostics: { file: string; message: string }[];
+  summary?: { text: string; files: string[]; source: 'agent' | 'api' };
 }

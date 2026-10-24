@@ -1,6 +1,6 @@
 {
   "name": "overseer-workspace",
-  "version": "0.1.0-dev.0",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "license": "MIT",
@@ -18,7 +18,9 @@
     "format:check": "prettier --check .",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "dev": "pnpm --filter @overseer/web dev",
-    "cli": "node packages/cli/dist/index.js"
+    "cli": "node packages/cli/dist/index.js",
+    "release:pack": "pnpm build && node --experimental-strip-types scripts/package.ts && npm pack ./artifacts/overseer-cli --pack-destination ./artifacts",
+    "release:smoke": "node --experimental-strip-types scripts/smoke-package.ts"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

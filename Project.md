@@ -1,6 +1,6 @@
 # Overseer — implementation route
 
-Last updated: 2026-10-23 (Asia/Qyzylorda).
+Last updated: 2026-10-24 (Asia/Qyzylorda).
 
 This is the working record for the whole project. Update it after every meaningful
 change. The product requirements are preserved verbatim in [docs/SPEC.md](docs/SPEC.md).
@@ -53,8 +53,8 @@ Important details to resolve at the relevant stage:
    requests must never contain raw secret values; HTML must escape project-controlled text.
 8. The local UI must bind to loopback. Git-ref comparison must not change the user's
    checkout or discard uncommitted changes.
-9. The web acceptance gate requires a real Next.js + Supabase project; no real app
-   has been supplied in this workspace yet.
+9. The web acceptance gate was verified on the real Next.js + Supabase project at
+   `C:/Products/learnIt`; see the stage 6 record.
 
 ## Roadmap and acceptance gates
 
@@ -62,12 +62,12 @@ Important details to resolve at the relevant stage:
 | ------------------------ | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------- |
 | 1. Foundation            | pnpm workspace; strict TypeScript; core, CLI, web; Vitest; ESLint; CI                                    | `pnpm test` and `pnpm build` pass in GitHub Actions; local quality checks pass         | Complete; remote CI passed |
 | 2. Fixtures              | Small clean and problematic Next.js + Supabase projects; explicit expected findings                      | Both fixtures are documented; every check has a reproducible trigger or diff baseline  | Complete                   |
-| 3. Scanner and analyzers | Ignore-aware discovery, routes, API methods, SQL tables, env usage, imports, dependencies; `scan --json` | Correct model for both fixtures, asserted by tests                                     | Planned                    |
-| 4. Features and checks   | Import-based feature grouping; 12 check modules; health score; readable CLI output                       | Bad fixture matches expectations; good fixture has no critical/warning findings        | Planned                    |
-| 5. Snapshots and diff    | Snapshots; terminal and HTML reports; `diff --since`; `check`                                            | Fixture edits produce correct additions/removals, risk, health changes, and exit codes | Planned                    |
-| 6. Web UI                | Default command opens local overview; feature detail; findings; history                                  | Useful and correct on a real Next.js + Supabase project, beyond fixtures               | Planned                    |
-| 7. Rules and sync        | Natural-language rules; supported built-in constraints; managed blocks                                   | Repeated sync is idempotent; all text outside markers remains unchanged                | Planned                    |
-| 8. AI and release        | `off`, `agent`, `api`; schema validation; demo; README media; npm/GitHub release                         | Published package starts with one command on a clean machine                           | Planned                    |
+| 3. Scanner and analyzers | Ignore-aware discovery, routes, API methods, SQL tables, env usage, imports, dependencies; `scan --json` | Correct model for both fixtures, asserted by tests                                     | Complete                   |
+| 4. Features and checks   | Import-based feature grouping; 12 check modules; health score; readable CLI output                       | Bad fixture matches expectations; good fixture has no critical/warning findings        | Complete                   |
+| 5. Snapshots and diff    | Snapshots; terminal and HTML reports; `diff --since`; `check`                                            | Fixture edits produce correct additions/removals, risk, health changes, and exit codes | Complete                   |
+| 6. Web UI                | Default command opens local overview; feature detail; findings; history                                  | Useful and correct on a real Next.js + Supabase project, beyond fixtures               | Complete                   |
+| 7. Rules and sync        | Natural-language rules; supported built-in constraints; managed blocks                                   | Repeated sync is idempotent; all text outside markers remains unchanged                | Complete                   |
+| 8. AI and release        | `off`, `agent`, `api`; schema validation; demo; README media; npm/GitHub release                         | Published package starts with one command on a clean machine                           | In progress                |
 
 ### Stage 1 — foundation
 
@@ -193,13 +193,13 @@ Important details to resolve at the relevant stage:
 Naming check on 2026-10-23: the npm registry reports `overseer@1.0.1` exists for an
 unrelated Object.observe shim; `overseer-cli` returns 404. The GitHub API reports 404
 for `gipotenuzsa/overseer` and `gipotenuzsa/overseer-ai`. These observations do not reserve
-names or guarantee publication rights. No remote repository or npm package was created.
+names or guarantee publication rights. These were pre-setup observations. The public GitHub repository now exists; npm publication is tracked below.
 
 Sources checked for toolchain setup: [Vite requirements](https://vite.dev/guide/),
 [Vitest requirements](https://main.vitest.dev/guide/), npm registry package metadata,
 and GitHub release/tag metadata. Exact dependency versions live in manifests and the lockfile.
 
-## Verification record
+## Foundation verification record (historical)
 
 Local environment: Windows, Node 22.22.2, pnpm 11.24.0.
 
@@ -260,11 +260,6 @@ locked dependency install, quality checks, tests, builds, and built CLI smoke ch
 - Verified fixture contents and passed the existing 5 tests and all package builds.
 - Stage 2 acceptance is complete. Analyzer correctness remains to be tested in stage 3.
 - Found a real Next.js + Supabase target at `C:/Products/learnIt` for the later UI gate.
-
-## Exact next task
-
-Implement stage 8: validated agent/API explanations, packaging, clean-install smoke
-tests, demo media, release documentation, and publication. npm login is not configured.
 
 ### 2026-10-23 — stage 3 scanner and analyzers
 
@@ -346,3 +341,40 @@ tests, demo media, release documentation, and publication. npm login is not conf
   CI run 39998504923 in all four environments.
 - Release preflight: `overseer-cli` still returns npm 404; no name is reserved. This
   machine is not logged in to npm, so publication will need the user's npm login.
+
+### 2026-10-24 — stage 8 implementation and release candidate
+
+- Added optional agent/API explanations with strict response validation, facts hashes,
+  file citations, visible AI labels, timeouts, response size limits, and deterministic
+  fallback. Off and agent modes make no provider requests. Requests contain facts only,
+  not source snippets. Dependency URL credentials are redacted before model export.
+- Used the existing Zod dependency and native fetch; no AI SDK or bundler was added.
+  The adapter follows the official Chat Completions JSON-mode request format, followed
+  by local schema validation. Provider tests use stubs; no paid provider call was run.
+- Prepared a single `overseer-cli@0.1.0` tarball with emitted core, CLI, and web assets.
+  Workspace packages stay private. Direct dependencies are pinned. Packaging and
+  isolated npm install/exec smoke tests are now part of the four-environment CI matrix.
+- Local package installation passed outside the workspace with its own npm cache:
+  version/help, good scan, bad check exit 1, diff, repeated sync, default UI, and assets.
+- Added usage/configuration/privacy documentation, contribution guidance, release
+  instructions, an issue template, demo screenshots, and an 18-second GIF.
+- Prepared a separate demo repository from the tested good/bad source fixtures, with
+  a `clean-baseline` Git tag. Synthetic tokens only; the sample is not for deployment.
+- Browser checks on the demo passed for map-to-detail navigation, filtering, explanation
+  expansion, and copying. Console errors/warnings: none. Existing real-project and
+  390 px mobile acceptance checks remain recorded under stage 6.
+- Found and fixed `ui` dropping inherited `--port` and `--no-open` flags; added two
+  regression cases. The preceding full check passed 51 tests; these two additional
+  cases passed separately. A complete final check and remote release CI are next.
+- The user completed npm login. `npm whoami` now returns `gipotenuzsa`. No package
+  has been published yet; this does not complete the stage 8 registry acceptance gate.
+- Final local `pnpm check` passed formatting, lint, all strict type checks, 53 tests,
+  and production builds. The rebuilt tarball also passed the isolated npm smoke test.
+  The original specification SHA-256 still matches the supplied source document.
+
+## Exact next task
+
+Run the final source checks and packaged smoke test, push the release candidate,
+verify all four remote CI jobs, then publish the tested tarball to npm and create
+the GitHub release and public demo. Verify registry-based startup from a clean
+folder before marking stage 8 complete.

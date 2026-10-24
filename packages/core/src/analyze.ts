@@ -4,10 +4,19 @@ import type { ScanContext } from './scanner/scan.js';
 import { groupFeatures } from './features/group.js';
 import { healthScore } from './health/score.js';
 import { checks } from './checks/index.js';
+import { explainProject } from './ai/explain.js';
+import { compareModels } from './snapshot/compare.js';
 
 export async function analyzeProject(root: string, baseline?: ProjectModel): Promise<ProjectModel> {
   const context = await scanContext(root);
-  return analyzeContext(context, baseline);
+  const model = await analyzeContext(context, baseline);
+  await explainProject(
+    context.root,
+    model,
+    context.config.ai,
+    baseline ? compareModels(baseline, model) : undefined,
+  );
+  return model;
 }
 
 export async function analyzeContext(

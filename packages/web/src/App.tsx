@@ -86,7 +86,9 @@ function FeatureMap({
     id: feature.id,
     position: { x: 0, y: index * 100 },
     sourcePosition: Position.Right,
-    data: { label: `${feature.name} · ${feature.files.length} files` },
+    data: {
+      label: `${feature.name}${feature.explanationSource ? ' (AI)' : ''} · ${feature.files.length} files`,
+    },
     style: { width: 250 },
   }));
   nodes.push(
@@ -149,6 +151,11 @@ function FindingCard({ finding }: { finding: Finding }) {
           {finding.file}:{finding.line ?? 1}
         </p>
         <p>{finding.message}</p>
+        {finding.explanation && (
+          <p>
+            <span className="ai-label">AI paraphrase</span> {finding.explanation}
+          </p>
+        )}
         <details>
           <summary>Why it matters & how to fix it</summary>
           <p>{finding.whyDangerous}</p>
@@ -353,6 +360,12 @@ export function App() {
           </div>
           {screen === 'Overview' && (
             <>
+              {model.summary && (
+                <section className="note" aria-label="AI explanation">
+                  <span className="ai-label">AI · {model.summary.source}</span>
+                  <p>{model.summary.text}</p>
+                </section>
+              )}
               <section className="overview-grid" aria-label="Project summary">
                 <article className="health-card">
                   <div>
@@ -440,19 +453,25 @@ export function App() {
                         <span className="feature-icon">{String(index + 1).padStart(2, '0')}</span>
                         <span aria-hidden="true">↗</span>
                       </div>
-                      <h3>{feature.name}</h3>
+                      <h3>
+                        {feature.name}{' '}
+                        {feature.explanationSource && <span className="ai-label">AI</span>}
+                      </h3>
                       <code>{feature.entry}</code>
                       <p>
                         {feature.description ||
-                          `${feature.files.length} connected files${feature.tables.length ? ` and ${feature.tables.length} data tables` : ''}.`}
+                          `${feature.files.length} connected files${feature.tables.length ? ` and ${feature.tables.length} data ${feature.tables.length === 1 ? 'table' : 'tables'}` : ''}.`}
                       </p>
                       <div className="feature-footer">
                         <span>
-                          {feature.apis.length} APIs <span className="separator">·</span>{' '}
-                          {feature.tables.length} tables
+                          {feature.apis.length} {feature.apis.length === 1 ? 'API' : 'APIs'}{' '}
+                          <span className="separator">·</span> {feature.tables.length}{' '}
+                          {feature.tables.length === 1 ? 'table' : 'tables'}
                         </span>
                         <span className={count ? 'finding-count' : 'clear-count'}>
-                          {count ? `${count} findings` : 'No findings'}
+                          {count
+                            ? `${count} ${count === 1 ? 'finding' : 'findings'}`
+                            : 'No findings'}
                         </span>
                       </div>
                     </button>
@@ -586,7 +605,12 @@ export function App() {
             <header>
               <div>
                 <p className="eyebrow">FEATURE DETAILS</p>
-                <h2 id="feature-title">{selected.name}</h2>
+                <h2 id="feature-title">
+                  {selected.name}{' '}
+                  {selected.explanationSource && (
+                    <span className="ai-label">AI · {selected.explanationSource}</span>
+                  )}
+                </h2>
                 <code>{selected.entry}</code>
               </div>
               <button

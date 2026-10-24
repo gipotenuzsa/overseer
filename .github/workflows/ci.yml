@@ -45,3 +45,9 @@ jobs:
 
       - name: Smoke test the built CLI
         run: pnpm cli --help
+
+      - name: Pack the release
+        run: pnpm release:pack
+
+      - name: Test the package outside the workspace
+        run: pnpm release:smoke

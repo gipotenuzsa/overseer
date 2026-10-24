@@ -6,5 +6,10 @@
     "types": ["node"],
     "noEmit": true
   },
-  "include": ["vitest.config.ts", "packages/*/test/**/*.ts", "packages/web/vite.config.ts"]
+  "include": [
+    "vitest.config.ts",
+    "packages/*/test/**/*.ts",
+    "packages/web/vite.config.ts",
+    "scripts/**/*.ts"
+  ]
 }

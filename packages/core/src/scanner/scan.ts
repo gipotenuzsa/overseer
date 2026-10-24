@@ -13,6 +13,7 @@ import { discover, optionalText } from './files.js';
 import type { Discovery } from './files.js';
 import { gitInfo } from './git.js';
 import { parseRules } from '../rules/parse.js';
+import { redact } from '../redact.js';
 
 export interface ScanContext {
   root: string;
@@ -53,7 +54,11 @@ export async function scanContext(directory: string): Promise<ScanContext> {
     const manifest = manifestSchema.parse(
       JSON.parse(sources.get('package.json') ?? '{}') as unknown,
     );
-    dependencies = { ...manifest.devDependencies, ...manifest.dependencies };
+    dependencies = Object.fromEntries(
+      Object.entries({ ...manifest.devDependencies, ...manifest.dependencies }).map(
+        ([key, value]) => [key, redact(value)],
+      ),
+    );
   } catch {
     throw new Error('The project package.json is missing or invalid.');
   }

@@ -1,6 +1,6 @@
 {
   "name": "overseer-cli",
-  "version": "0.1.0-dev.0",
+  "version": "0.1.0",
   "description": "See what your AI coding agent actually built.",
   "private": true,
   "type": "module",

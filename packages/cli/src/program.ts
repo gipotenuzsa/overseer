@@ -19,8 +19,8 @@ export function createProgram(version: string): Command {
     .version(version)
     .addHelpText(
       'after',
-      '\nDevelopment preview: scan extracts local project facts.\n' +
-        'Follow implementation progress in Project.md.',
+      '\nRun inside a Next.js App Router project. No API key is needed.\n' +
+        'Known patterns only; findings are not a security guarantee.',
     );
 
   const parsePort = (value: string): number => {
@@ -60,7 +60,9 @@ export function createProgram(version: string): Command {
     .argument('[directory]', 'Project folder', '.')
     .option('--no-open', 'Keep the browser closed')
     .option('--port <port>', 'Preferred local port', parsePort)
-    .action(showUI);
+    .action(async (directory: string, _options: unknown, command: Command) =>
+      showUI(directory, command.optsWithGlobals<{ open?: boolean; port?: number }>()),
+    );
 
   program
     .command('scan')
