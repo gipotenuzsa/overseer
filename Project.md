@@ -8,15 +8,18 @@ The original supplied Markdown file remains in the root for traceability.
 
 ## Current position
 
-**Active stage: 8 — optional AI and release.** Stages 1 through 7 are complete.
-The foundation passed all four GitHub Actions jobs on Windows/Linux and Node 22/24:
-[CI run 39963440989](https://github.com/gipotenuzsa/overseer/actions/runs/39963440989).
-Both documented fixtures produce tested models through the built `scan --json` command.
+**Overseer 0.1.0 is released. All eight acceptance gates are complete.**
+The [npm package](https://www.npmjs.com/package/overseer-cli),
+[GitHub release](https://github.com/gipotenuzsa/overseer/releases/tag/v0.1.0), and
+[public demo](https://github.com/gipotenuzsa/overseer-demo) are available.
+Release commit `69bef05` passed all four Windows/Linux and Node 22/24 jobs in
+[CI run 40065867123](https://github.com/gipotenuzsa/overseer/actions/runs/40065867123).
+The published package passed an isolated registry install and command/UI smoke test.
 
 ## Product goal and boundaries
 
 Help a person who cannot read code understand a Next.js App Router + Supabase project
-and what an AI agent changed. The initial release will provide a feature map, session
+and what an AI agent changed. The initial release provides a feature map, session
 reports, 12 deterministic checks, architecture rules, and a transparent health score.
 
 - The core works locally, without an account, backend service, or API key.
@@ -67,7 +70,7 @@ Important details to resolve at the relevant stage:
 | 5. Snapshots and diff    | Snapshots; terminal and HTML reports; `diff --since`; `check`                                            | Fixture edits produce correct additions/removals, risk, health changes, and exit codes | Complete                   |
 | 6. Web UI                | Default command opens local overview; feature detail; findings; history                                  | Useful and correct on a real Next.js + Supabase project, beyond fixtures               | Complete                   |
 | 7. Rules and sync        | Natural-language rules; supported built-in constraints; managed blocks                                   | Repeated sync is idempotent; all text outside markers remains unchanged                | Complete                   |
-| 8. AI and release        | `off`, `agent`, `api`; schema validation; demo; README media; npm/GitHub release                         | Published package starts with one command on a clean machine                           | In progress                |
+| 8. AI and release        | `off`, `agent`, `api`; schema validation; demo; README media; npm/GitHub release                         | Published package starts with one command on a clean machine                           | Complete                   |
 
 ### Stage 1 — foundation
 
@@ -366,15 +369,40 @@ locked dependency install, quality checks, tests, builds, and built CLI smoke ch
 - Found and fixed `ui` dropping inherited `--port` and `--no-open` flags; added two
   regression cases. The preceding full check passed 51 tests; these two additional
   cases passed separately. A complete final check and remote release CI are next.
-- The user completed npm login. `npm whoami` now returns `gipotenuzsa`. No package
-  has been published yet; this does not complete the stage 8 registry acceptance gate.
+- The user completed npm login for `gipotenuzsa`. This prepared publication but did
+  not by itself complete the stage 8 registry acceptance gate.
 - Final local `pnpm check` passed formatting, lint, all strict type checks, 53 tests,
   and production builds. The rebuilt tarball also passed the isolated npm smoke test.
   The original specification SHA-256 still matches the supplied source document.
+- Remote [CI run 40065867123](https://github.com/gipotenuzsa/overseer/actions/runs/40065867123)
+  passed all four Windows/Linux and Node 22/24 jobs at commit `69bef05`, including
+  isolated package installation and startup. No remote check is pending for that commit.
+- Published the synthetic [demo repository](https://github.com/gipotenuzsa/overseer-demo)
+  with its `clean-baseline` tag. Prepared the GitHub 0.1.0 release as a draft and
+  attached the tested tarball (SHA-1 `2af8568394ad4de5c349adaf51749e1cff24f3d7`).
+- Initial direct npm publication returned E403 because account 2FA was disabled.
+  The user then enabled 2FA and personally confirmed the npm publication challenge.
+- Verified agent mode in the browser with a local facts-only response: feature and
+  finding explanations are labeled, health stays 18, and the console has no errors.
+
+### 2026-10-24 — release acceptance complete
+
+- Published `overseer-cli@0.1.0`. The registry SHA-1 matches the tested tarball:
+  `2af8568394ad4de5c349adaf51749e1cff24f3d7`.
+- Re-ran the full isolated package smoke test against the registry package, not the
+  local tarball: help/version, scan/check exits, diff, repeated sync, UI, and web assets passed.
+- Cloned the public demo into a fresh temporary directory outside the workspace and
+  launched `npx --yes --cache ../npm-cache overseer-cli@0.1.0 --no-open --port 0`.
+  The dashboard rendered the expected 15 files, 2 features, health 18, and 10 findings.
+  No browser console errors or warnings were reported.
+- Published GitHub release `v0.1.0` at release commit `69bef05`, including the same
+  tested tarball. The public demo includes its clean comparison baseline.
+- Stage 8 acceptance is complete. Later documentation commits do not change the
+  published 0.1.0 archive. No live paid-provider test is claimed.
 
 ## Exact next task
 
-Run the final source checks and packaged smoke test, push the release candidate,
-verify all four remote CI jobs, then publish the tested tarball to npm and create
-the GitHub release and public demo. Verify registry-based startup from a clean
-folder before marking stage 8 complete.
+No required implementation remains for 0.1.0. The next optional development task is
+support for inherited tsconfig aliases, with good/bad regression fixtures and unchanged
+conservative findings. Keep dynamic SQL, remote RLS state, complex authorization,
+and live provider compatibility as documented limits until separately verified.

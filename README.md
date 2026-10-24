@@ -39,6 +39,9 @@ To install a prepared release tarball, use
 `npm install -g ./overseer-cli-0.1.0.tgz`, then run `overseer` from your app folder.
 See [release preparation](docs/RELEASE.md) and [complete usage](docs/USAGE.md).
 
+Try the [public demo](https://github.com/gipotenuzsa/overseer-demo), or download
+the tested tarball from [release 0.1.0](https://github.com/gipotenuzsa/overseer/releases/tag/v0.1.0).
+
 ## Why
 
 An AI agent can change dozens of files while you are thinking about one feature.

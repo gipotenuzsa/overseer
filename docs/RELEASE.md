@@ -51,3 +51,8 @@ release, and CI results. Do not label registry startup as passed before this ste
 Release acceptance, registry publication, and the exact remote CI results are
 recorded in Project.md. A prepared tarball is not a published npm release. Provider
 tests use controlled responses; no live paid API-provider test is claimed.
+
+0.1.0 is published to npm and GitHub. All 53 tests and four CI environments passed;
+an isolated install of the published registry package and a fresh-clone `npx`
+dashboard launch passed. See the [release](https://github.com/gipotenuzsa/overseer/releases/tag/v0.1.0)
+and [acceptance record](../Project.md#2026-10-24--release-acceptance-complete).

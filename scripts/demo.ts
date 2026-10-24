@@ -46,7 +46,7 @@ are synthetic. Do not deploy it or connect it to a real database.
 
 ## Try it
 
-After overseer-cli is published to npm:
+Run with the published Overseer package:
 
 \`\`\`sh
 git clone https://github.com/gipotenuzsa/overseer-demo.git
@@ -54,7 +54,7 @@ cd overseer-demo
 npx overseer-cli
 \`\`\`
 
-Before publication, install the prepared Overseer tarball and run \`overseer\`, or
+You can also install the Overseer release tarball and run \`overseer\`, or
 use \`pnpm cli ui <path-to-this-folder>\` from the Overseer source repository.
 The sample itself does not need npm install or a running web server.
 
